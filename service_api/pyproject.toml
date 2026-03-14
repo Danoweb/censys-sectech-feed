@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "censys-sectech-feed"
+version = "0.1.0"
+description = "A project for Censys"
+authors = [
+  "Dan Reed <danreed1986@gmail.com>"
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+cryptography = "44.0.1"
+email-validator = "2.2.0"
+fastapi = "0.110.0"
+httpx = "0.27.0"
+pymysql = "1.1.1"
+python-jose = "3.4.0"
+pydantic = "2.6.1"
+pydantic-settings = "2.1.0"
+python-dotenv = "1.0.0"
+sqlalchemy = "2.0.27"
+uvicorn = "0.27.1"
+pytest = "8.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"

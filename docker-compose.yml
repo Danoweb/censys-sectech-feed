@@ -1,0 +1,68 @@
+services:
+
+  alerts_db:
+    image: mariadb:11
+    container_name: alerts_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: alerts_mock
+      MYSQL_USER: danomock
+      MYSQL_PASSWORD: danomock
+    volumes:
+      - alerts_db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  alerts_api:
+    build:
+      context: ./alerts_api
+    container_name: alerts_api
+    restart: unless-stopped
+    depends_on:
+      alerts_db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql+pymysql://danomock:danomock@alerts_db:3306/alerts_mock
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./alerts_api/api:/app/api
+      - ./alerts_api/main.py:/app/main.py
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  service_api:
+    build:
+      context: ./service_api
+    container_name: service_api
+    restart: unless-stopped
+    depends_on:
+      alerts_db:
+        condition: service_healthy
+      alerts_api:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql+pymysql://danomock:danomock@alerts_db:3306/alerts_mock
+      ALERTS_API_URL: http://alerts_api:8000
+      SYNC_INTERVAL_MINUTES: 1
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./service_api/api:/app/api
+      - ./service_api/tests:/app/tests
+      - ./service_api/main.py:/app/main.py
+    ports:
+      - "8001:8001"
+
+volumes:
+  alerts_db_data:
