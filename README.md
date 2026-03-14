@@ -64,3 +64,14 @@ An example for how a feed could pull from sectech, translate the data, and store
 
 ## Conclusion
 This project runs a simulated alerts API which responds with randomized alert details, it then has a service API which takes those alerts, and enriches the content for certain providers, storing the alert details in a normalized schema into a MySql Database.
+
+## Examples
+These are scnreeshots of the project working in it's various states:
+- Alerts Example
+  - ![Alerts Example](docs/alerts_example.png)
+- Sync Example:
+  - ![Sync Example](docs/sync_example.png)
+- Health Example:
+  - ![Health Example](docs/health_example.png)
+- Data Example:
+  - ![Data Example](docs/database_example.png)
